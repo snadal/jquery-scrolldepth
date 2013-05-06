@@ -12,7 +12,8 @@
     minHeight: 0,
     offset: 0, // Not used yet
     percentage: true,
-    testing: false
+    testing: false,
+    bounceTime: 15000
   },
 
   $window = $(window),
@@ -27,6 +28,8 @@
     var startTime = +new Date;
 
     options = $.extend({}, defaults, options);
+    
+    trackBounceTime = true;
 
     // Return early if document height is too small
     if ( $(document).height() < options.minHeight ) {
@@ -47,6 +50,11 @@
 
         if (arguments.length > 2) {
           _gaq.push(['_trackTiming', 'Scroll Depth', action, timing, label, 100]);
+          if (trackBounceTime) {
+            // Only one trackEvent for removing bounces.            
+            setTimeout("_gaq.push(['_trackEvent', '15_seconds', 'read'])", Math.max(options.bounceTime-timing, 0));
+            trackBounceTime = false;
+          }
         }
 
       } else {
